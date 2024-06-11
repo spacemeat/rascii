@@ -1,3 +1,7 @@
+# Project-spcific
+build/
+.venv/
+
 # Prerequisites
 *.d
 
