@@ -34,7 +34,7 @@ int main()
 
 	auto start_time = std::chrono::high_resolution_clock::now();
 	auto prev_time = start_time;
-	auto run_delta = std::chrono::duration_cast<std::chrono::milliseconds>(0ms)
+	auto run_delta = std::chrono::duration_cast<std::chrono::microseconds>(0ms)
 		.count();
 	[[maybe_unused]] auto frame_delta = run_delta;
 
@@ -42,7 +42,7 @@ int main()
 
 	auto fg = color_b24({255, 255, 0});
 
-	int run_time = 9;
+	int run_time = 10;
 	std::u8string msg = std::u8string(u8"Done in 0...");
 	msg[8] = u8'0' + run_time - 1;
 
@@ -63,19 +63,19 @@ int main()
 
 	std::ostringstream oss;
 
-	while (run_delta < run_time * 1000)
+	while (run_delta < run_time * 1000 * 1000)
 	{
 		auto time = std::chrono::high_resolution_clock::now();
-		frame_delta = std::chrono::duration_cast<std::chrono::milliseconds>(time - prev_time)
+		frame_delta = std::chrono::duration_cast<std::chrono::microseconds>(time - prev_time)
 			.count();
-		run_delta = std::chrono::duration_cast<std::chrono::milliseconds>(time - start_time)
+		run_delta = std::chrono::duration_cast<std::chrono::microseconds>(time - start_time)
 			.count();
 		prev_time = time;
 
-		float fps = 1000.f / calc_avg_frame_times(frame_delta);
+		float fps = 1000.f * 1000.f / calc_avg_frame_times(frame_delta);
 		oss << "FPS: " << std::fixed << std::setprecision(2) << fps;
 
-		int offset = run_delta;
+		int offset = run_delta / 1000;
 
 		for (uint y = 0; y < er * 2; y += 1)
 		{
@@ -88,7 +88,8 @@ int main()
 				renderer.set_pixel(x, y, co);
 			}
 		}
-		renderer.print_str(ec / 2 - 5, er / 2, oss.view(), & fg, nullptr);
+		uint fx = DOUBLE_UNDERLINE;
+		renderer.print_str(ec / 2 - 5, er / 2, oss.view(), & fg, nullptr, & fx);
 		oss.str("");
 		renderer.paint_raster();
 		++num_frames;

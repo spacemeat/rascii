@@ -17,7 +17,7 @@ public:
 	void on_key(Key const & key)
 	{
 		color_b24 fg = { 255, 255, 255 };
-		term.get_renderer().print_str(3, 4, key.get_sequence_view(), & fg, nullptr);
+		term.get_renderer().print_str(3, 4, key.get_sequence_view(), & fg, nullptr, nullptr);
 
 		if (key.flags == Special && key.key == static_cast<char8_t>(SpecialKey::ESC))
 			{ esc_count += 1; }

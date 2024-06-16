@@ -5,7 +5,7 @@ renderer_lib = p.CompileAndArchivePhase({
     'sources': [
         'renderer.cpp',
         'color_convert.cpp',
-        'raster.cpp'
+        #'raster.cpp'
     ],
 })
 

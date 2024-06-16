@@ -15,28 +15,45 @@
 namespace rascii
 {
 
-constexpr char8_t const b4_ansi[]  = u8"\x1b[38;3;00m\x1b[38;3;00m";
-constexpr char8_t const b8_ansi[]  = u8"\x1b[38;5;000m\x1b[38;5;000m";
-constexpr char8_t const b24_ansi[] = u8"\x1b[38;2;000;000;000m\x1b[48;2;000;000;000m";
+constexpr char const ansi_fg_4[] = "\x1b[38;3;";
+constexpr char const ansi_bg_4[] = "\x1b[48;3;";
+constexpr char const ansi_fg_8[] = "\x1b[38;5;";
+constexpr char const ansi_bg_8[] = "\x1b[48;5;";
+constexpr char const ansi_fg_24[] = "\x1b[38;2;";
+constexpr char const ansi_bg_24[] = "\x1b[48;2;";
 
-void ctoa(char8_t * str, color_b4 c)
+constexpr char const ansi_single_underline_on[] = "\x1b[4m";
+constexpr char const ansi_double_underline_on[] = "\x1b[21m";
+constexpr char const ansi_any_underline_off[] = "\x1b[24m";
+constexpr char const ansi_overline_on[] = "\x1b[53m";
+constexpr char const ansi_overline_off[] = "\x1b[55m";
+constexpr char const ansi_italic_on[] = "\x1b[3m";
+constexpr char const ansi_italic_off[] = "\x1b[23m";
+constexpr char const ansi_strike_on[] = "\x1b[9m";
+constexpr char const ansi_strike_off[] = "\x1b[29m";
+
+void ctoa(color_b4 from, char * to)
 {
-	str[1] = u8'0' + c / 10;
-	str[2] = u8'0' + c % 10;
+	to[0] = '0' + from / 10;
+	to[1] = '0' + from % 10;
+	to[2] = 'm';
 }
 
-void ctoa(char8_t * str, color_b8 c)
+void ctoa(color_b8 from, char * to)
 {
-	str[0] = u8'0' + c / 100;
-	str[1] = u8'0' + (c % 100) / 10;
-	str[2] = u8'0' + ((c % 100) % 10);
+	to[0] = '0' + from / 100;
+	to[1] = '0' + (from % 100) / 10;
+	to[2] = '0' + ((from % 100) % 10);
+	to[3] = 'm';
 }
 
-void ctoa(char8_t * str, color_b24 c)
+void ctoa(color_b24 from, char * to)
 {
-	rascii::ctoa(str, color_b8(c[0]));
-	rascii::ctoa(str + 4, color_b8(c[1]));
-	rascii::ctoa(str + 8, color_b8(c[2]));
+	rascii::ctoa(color_b8(from[0]), to);
+	to[3] = ';';
+	rascii::ctoa(color_b8(from[1]), to + 4);
+	to[7] = ';';
+	rascii::ctoa(color_b8(from[2]), to + 8);
 }
 
 std::tuple<bool, int> u32_to_u8(char32_t codepoint, char8_t * buf)
@@ -58,12 +75,12 @@ std::tuple<bool, int> u32_to_u8(char32_t codepoint, char8_t * buf)
 }
 
 
-using Raster_b4  = Raster<ColorDepth::b4,  b4_ansi,  sizeof(b4_ansi) - 1,  color_b4,
-						  fg_offset_4,  bg_offset_4>;
-using Raster_b8  = Raster<ColorDepth::b8,  b8_ansi,  sizeof(b8_ansi) - 1,  color_b8,
-						  fg_offset_8,  bg_offset_8>;
-using Raster_b24 = Raster<ColorDepth::b24, b24_ansi, sizeof(b24_ansi) - 1, color_b24,
-						  fg_offset_24, bg_offset_24>;
+using Raster_b4  = Raster<ColorDepth::b4,  ansi_fg_4, ansi_bg_4,
+						  sizeof(ansi_fg_4),  3,  color_b4>;
+using Raster_b8  = Raster<ColorDepth::b8,  ansi_fg_8, ansi_bg_8,
+					      sizeof(ansi_fg_8),  4,  color_b8>;
+using Raster_b24 = Raster<ColorDepth::b24, ansi_fg_24, ansi_bg_24,
+						  sizeof(ansi_fg_24), 12, color_b24>;
 
 Renderer::Renderer(std::tuple<uint, uint> extents, ColorDepth depth)
 {
@@ -177,19 +194,19 @@ void Renderer::clear_raster(color_b24 const * bg)
 		for (uint c = 0; c < raster.get_width(); ++c)
 		{
 			auto tx = u8' ';
-			raster.set_cell(c, r, & tx, 1, nullptr, bg);
+			raster.set_cell(c, r, & tx, 1, nullptr, bg, 0);
 		}
 	}
 }
 
 void Renderer::print_str(uint c, uint r, std::string_view const str,
-						 color_b24 * fg, color_b24 * bg)
+						 color_b24 * fg, color_b24 * bg, uint * fx)
 {
-	print_str(c, r, { reinterpret_cast<char8_t const *>(str.data()), str.size() }, fg, bg);
+	print_str(c, r, { reinterpret_cast<char8_t const *>(str.data()), str.size() }, fg, bg, fx);
 }
 
 void Renderer::print_str(uint c, uint r, std::u8string_view const str,
-						 color_b24 * fg, color_b24 * bg)
+						 color_b24 * fg, color_b24 * bg, uint * fx)
 {
 	auto && raster = get_raster();
 	size_t cursor = 0;
@@ -214,7 +231,7 @@ void Renderer::print_str(uint c, uint r, std::u8string_view const str,
 						{ return; }
 				}
 			}
-			raster.set_cell(c, r, & str[cursor], cus, fg, bg);
+			raster.set_cell(c, r, & str[cursor], cus, fg, bg, fx);
 			cursor = cp_cursor;
 			c += 1;
 		}
@@ -222,6 +239,14 @@ void Renderer::print_str(uint c, uint r, std::u8string_view const str,
 		r += 1;
 	}
 }
+
+
+color_b24 Renderer::get_pixel(uint x, uint y)
+{
+	auto && raster = get_raster();
+	return raster.get_pixel(x, y);
+}
+
 
 void Renderer::set_pixel(uint x, uint y, color_b24 color)
 {
@@ -234,12 +259,8 @@ void Renderer::paint_raster()
 {
 	auto && raster = get_raster();
 
-	/*/
 	auto str = raster.get_stream();
-	/*/
-	auto str = raster.get_stream2();
-	/**/
-	std::cout << "\x1b[1;1H\x1b[?25l" << std::flush << str << std::flush; // std::print(stdout, "{}", str);
+	std::cout << "\x1b[1;1H\x1b[?25l" << std::flush << str << std::flush;
 }
 
 } // using namespace rascii
