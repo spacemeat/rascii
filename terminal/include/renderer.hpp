@@ -560,9 +560,9 @@ public:
 
 	void clear_raster(color_b24 const * fg);
 	void print_str(uint x, uint y, std::string_view const str,
-				   color_b24 * fg, color_b24 * bg, uint * fx);
+				   color_b24 * fg, color_b24 * bg = nullptr, uint * fx = nullptr);
 	void print_str(uint x, uint y, std::u8string_view const str,
-				   color_b24 * fg, color_b24 * bg, uint * fx);
+				   color_b24 * fg, color_b24 * bg = nullptr, uint * fx = nullptr);
 	color_b24 get_pixel(uint x, uint y);
 	void set_pixel(uint x, uint y, color_b24 color);
 	void paint_raster();
