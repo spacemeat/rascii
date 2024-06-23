@@ -1,0 +1,20 @@
+{
+	strings: {
+		main-menu: ^^
+<menu-normal><menu-title>@app-name@</>
+
+<menu-accel>n</>: @new-game@
+
+<menu-accel>r</>: @resume-game@
+
+<menu-accel>l</>: @load-game@
+
+<menu-accel>q</>: @quit-game@</>^^
+	}
+
+	styles: {
+		menu-normal: {#7f7f7fff|#0000}
+		menu-title: {#ffff00ff|#0000|dl}
+		menu-accel: {#7fffffff|#0000|ul}
+	}
+}
