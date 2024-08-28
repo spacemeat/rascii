@@ -3,7 +3,7 @@
 
 using namespace rascii;
 
-
+/*
 class MainMenu : public FloatingWindow
 {
 public:
@@ -25,6 +25,7 @@ private:
 		//...
 	}
 };
+*/
 
 class MainWindow : public TerminalFrameWindow
 {
@@ -67,9 +68,8 @@ private:
 
 int main()
 {
-	Terminal t;
-	Ui ui<MainWindow>(t);
-	ui.set_config_path("ui_test_config.hu");
+	Ui ui<MainWindow>();
+	ui.set_config_path("test-demo/config.hu");
 	ui.load_config();
 	ui.start();
-};
+}

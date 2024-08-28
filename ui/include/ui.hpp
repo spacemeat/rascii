@@ -3,27 +3,15 @@
 #include <concepts>
 #include <limits>
 
+#include "terminal.hpp"
+#include "i18n.hpp"
+
+#include "region.hpp"
+
 namespace rascii
 {
+
 const uint INFINITE = std::numeric_limits<uint>::max();
-
-struct Pos
-{
-	uint x = 0;
-	uint y = 0;
-};
-
-struct Size
-{
-	uint w = 0;
-	uint h = 0;
-};
-
-struct Box
-{
-	Pos pos;
-	Size size;
-};
 
 struct Color_rgba
 {
@@ -114,13 +102,16 @@ public:
 
 	virtual ~Window() { }
 	
-	void invalidate_region(Box rect) { /* TODO: this */ }
+	void invalidate_region(Box rect)
+	{
+		m_invalid_regions.push_back(rect);
+	}
 
 	template <typename WindowType, typename Args...>
 	requires std::derived_from<WindowType, Window>
 	WindowHandle add_child_window(Args ...args)
 	{
-		auto win = ui->manage_window(new WindowType(m_ui, ...args));
+		auto win = ui->manage_window(std::make_unique(new WindowType(m_ui, ...args)));
 		add_child_window(win);
 		return win;
 	}
@@ -188,10 +179,31 @@ protected:
 	virtual Size get_real_minimum_size() = 0;
 	virtual Size get_ideal_minimum_size() = 0;
 
+	void compute_draw_regions()
+	{
+		std::vector<Box> draw_regions;
+
+		std::vector<Box> invalids = invalid_regions;
+
+		for (auto & inv_box: invalids)
+		{
+			// carve out of inv_box any occluding child window boxes
+
+			for (auto & child: m_child_windows)
+			{
+				auto inv_boxes = inv_box.cut(child.m_relative_box);
+				for (auto & new_box: inv_boxes)
+				{
+					draw_regions.push_back(new_box);
+				}
+			}
+		}
+	}
+
 	Ui * m_ui;
 	WindowHandle m_parent_window;
 	std::vector<WindowHandle> m_child_windows;
-	std::vector<WindowHandle> m_floating_windows;
+	//std::vector<WindowHandle> m_floating_windows;
 	
 	int m_relative_depth; // relative to parent window's depth
 	Box m_relative_box;	// relative to parent window's relative_box
@@ -202,6 +214,9 @@ protected:
 	uint m_scroll_start_priority;
 
 	bool m_is_visible = false;
+
+	std::vector<Box> m_invalid_regions;
+	std::vector<Box> m_draw_regions;
 };
 
 
@@ -378,10 +393,12 @@ protected:
 			sz += m_child_windows[0].get_real_minimum_size();
 		}
 
+		/*
 		for (auto && f : m_floating_windows)
 		{
 			sz = min(sz, f->get_real_minimum_size());
 		}
+		*/
 
 		return sz;
 	}
@@ -399,10 +416,12 @@ protected:
 			sz += m_child_windows[0].get_ideal_minimum_size();
 		}
 
+		/*
 		for (auto && f : m_floating_windows)
 		{
 			sz = min(sz, f->get_ideal_minimum_size());
 		}
+		*/
 
 		return sz;
 	}
@@ -437,7 +456,6 @@ public:
 protected:
 	virtual void on_init() { }
 
-
 	virtual bool on_key(Key & key)
 	{
 		if ((key == 'd' || key == 'D') && key.flags == CTRL)
@@ -458,10 +476,9 @@ class Ui
 public:
 	template <typename MainWindowType, typename ...Args>
 	requires std::derived_from<MainWindowType, TerminalFrameWindow>
-	Ui(Terminal & terminal, Args... args)
-	: m_terminal(& terminal)
+	Ui(Args... args)
 	{
-		manage_window(new MainWindowType(this, args));
+		manage_window(std::make_unique(new MainWindowType(this, args)));
 	}
 
 	~Ui();
@@ -477,7 +494,7 @@ public:
 	void load_config();
 
 	WindowHandle get_terminal_frame_window() const { return m_windows[0].get(); }
-	WindowHandle manage_window(Window * window);
+	WindowHandle manage_window(std::unique_ptr<Window> window);
 
 private:
 
@@ -495,7 +512,7 @@ private:
 	hu::Trove m_config_trove;
 	hu::Node m_strings;
 	hu::Node m_styles;
-	Terminal * terminal;
+	Terminal m_terminal;
 
 	std::vector<std::unique_ptr<Window>> m_windows;
 };

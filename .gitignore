@@ -1,6 +1,7 @@
 # Project-spcific
 build/
 .venv/
+external/
 
 # Prerequisites
 *.d

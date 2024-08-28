@@ -85,5 +85,4 @@ std::u8string_view const get_box_cell(std::array<BoxCellType, 4> const & connect
 		}
 		return get_box_chars(recond);
 	}
-	
 }
