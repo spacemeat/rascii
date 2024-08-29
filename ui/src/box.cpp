@@ -69,10 +69,10 @@ int merge_boxes_if_adjacent(Box a, Box b,
 			// if a's bottom edge is level with b's bottom edge
 			else if (a.pos.y + a.size.h == b.pos.y + b.size.h)
 			{
-				replacements[num_repl++].emplace(
-					a.pos, Size { a.size.w, b.pos.y - a.pos.y });
-				replacements[num_repl++].emplace(
-					b.pos, Size { a.size.w + b.size.w, b.size.h });
+				replacements[num_repl++].emplace(a.pos,
+					Size { a.size.w, b.pos.y - a.pos.y });
+				replacements[num_repl++].emplace(Pos { a.pos.x, b.pos.y },
+					Size { a.size.w + b.size.w, b.size.h });
 			}
 			// if a's bottom edge is below b's bottom edge
 			else
@@ -92,11 +92,11 @@ int merge_boxes_if_adjacent(Box a, Box b,
 			// if a's bottom edge is above b's bottom edge
 			if (a.pos.y + a.size.h < b.pos.y + b.size.h)
 			{
-				replacements[num_repl++].emplace(
-					a.pos, Size { a.size.w + b.size.w, a.size.h });
-				replacements[num_repl++].emplace(Pos { b.pos.x, a.pos.y },
-								  Size { b.size.h, (b.pos.y + b.size.h) - 
-													 (a.pos.y + a.size.h) });
+				replacements[num_repl++].emplace(a.pos,
+					Size { a.size.w + b.size.w, a.size.h });
+				replacements[num_repl++].emplace(Pos { b.pos.x, a.pos.y + a.size.h },
+				    Size { b.size.w, (b.pos.y + b.size.h) - 
+									 (a.pos.y + a.size.h) });
 			}
 			// if a's bottom edge is level with b's bottom edge
 			else if (a.pos.y + a.size.h == b.pos.y + b.size.h)
@@ -107,11 +107,11 @@ int merge_boxes_if_adjacent(Box a, Box b,
 			// if a's bottom edge is below b's bottom edge
 			else
 			{
-				replacements[num_repl++].emplace(
-					a.pos, Size { a.size.w + b.size.w, b.size.h });
-				replacements[num_repl++].emplace(Pos { b.pos.x, a.pos.y + a.size.h },
-								  Size { a.size.w, (a.pos.y + a.size.h) - 
-													 (b.pos.y + b.size.h) });
+				replacements[num_repl++].emplace(a.pos,
+					Size { a.size.w + b.size.w, b.size.h });
+				replacements[num_repl++].emplace(Pos { a.pos.x, b.pos.y + b.size.h },
+					Size { a.size.w, (a.pos.y + a.size.h) - 
+									 (b.pos.y + b.size.h) });
 			}
 		}
 	}
@@ -144,14 +144,14 @@ int merge_boxes_if_adjacent(Box a, Box b,
 		// if a's bottom edge is above b's bottom edge
 		else
 		{
-			replacements[num_repl++].emplace(
-				a.pos, Size { a.size.w, b.pos.y - a.pos.y });
-			replacements[num_repl++].emplace(
-				b.pos, Size { b.size.w + a.size.w,
-											   a.size.h + a.size.h - b.pos.y });
-			replacements[num_repl++].emplace(Pos { a.pos.x, b.pos.y + b.size.h },
-							  Size { b.size.w, (b.pos.y + b.size.h) - 
-												 (a.pos.y + a.size.h) });
+			replacements[num_repl++].emplace(a.pos,
+				Size { a.size.w, b.pos.y - a.pos.y });
+			replacements[num_repl++].emplace(b.pos,
+				Size { b.size.w + a.size.w,
+					   b.pos.y + b.size.h - (a.pos.y + a.size.h) });
+			replacements[num_repl++].emplace(Pos { b.pos.x, a.pos.y + a.size.h },
+				Size { b.size.w, (b.pos.y + b.size.h) - 
+								 (a.pos.y + a.size.h) });
 		}
 	}
 
@@ -212,6 +212,11 @@ std::vector<Box> normalize_boxes(std::vector<Box> boxes)
 			}
 			++bit_old;
 		}
+
+		boxes = new_boxes;
+		std::cout << "Boxes: \n";
+		for (auto & box : boxes)
+			{ std::cout << box << "\n"; }
 	} while (is_boxes_sorted(new_boxes) == false);
 
 	return new_boxes;

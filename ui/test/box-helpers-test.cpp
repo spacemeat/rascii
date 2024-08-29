@@ -17,7 +17,7 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 1);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 6, 4 } });
 	}
 	SUBCASE("merge top-bottom reverse")
 	{
@@ -72,9 +72,9 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 3);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 3, 1 } });
-		CHECK(repl[1] == Box { Pos { -3, -1 }, Size { 6, 1 } });
-		CHECK(repl[2] == Box { Pos { 0, 0 }, Size { 3, 1 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 3, 1 } });
+		CHECK(*repl[1] == Box { Pos { -3, -1 }, Size { 6, 1 } });
+		CHECK(*repl[2] == Box { Pos { 0, 0 }, Size { 3, 1 } });
 	}
 	SUBCASE("merge uu reverse")
 	{
@@ -93,8 +93,8 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 2);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 3, 2 } });
-		CHECK(repl[1] == Box { Pos { -3, 0 }, Size { 6, 2 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 3, 2 } });
+		CHECK(*repl[1] == Box { Pos { -3, 0 }, Size { 6, 2 } });
 	}
 	SUBCASE("merge ue reverse")
 	{
@@ -113,9 +113,9 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 3);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 3, 1 } });
-		CHECK(repl[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
-		CHECK(repl[2] == Box { Pos { -3, 0 }, Size { 3, 1 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 3, 1 } });
+		CHECK(*repl[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
+		CHECK(*repl[2] == Box { Pos { -3, 1 }, Size { 3, 1 } });
 	}
 	SUBCASE("merge ud reverse")
 	{
@@ -134,8 +134,8 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 2);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 3, 2 } });
-		CHECK(repl[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
+		CHECK(*repl[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
 	}
 	SUBCASE("merge eu reverse")
 	{
@@ -154,7 +154,7 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 1);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 6, 4 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 6, 4 } });
 	}
 	SUBCASE("merge ee reverse")
 	{
@@ -173,8 +173,8 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 2);
-		CHECK(repl[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
-		CHECK(repl[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
+		CHECK(*repl[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
+		CHECK(*repl[1] == Box { Pos { -3, 0 }, Size { 3, 2 } });
 	}
 	SUBCASE("merge ed reverse")
 	{
@@ -202,9 +202,9 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 3);
-		CHECK(repl[0] == Box { Pos { -3, 0 }, Size { 3, 1 } });
-		CHECK(repl[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
-		CHECK(repl[2] == Box { Pos { 0, 1 }, Size { 3, 1 } });
+		CHECK(*repl[0] == Box { Pos { 0, -2 }, Size { 3, 1 } });
+		CHECK(*repl[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
+		CHECK(*repl[2] == Box { Pos { 0, 1 }, Size { 3, 1 } });
 	}
 	SUBCASE("merge de")
 	{
@@ -223,8 +223,8 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 2);
-		CHECK(repl[0] == Box { Pos { 0, -2 }, Size { 3, 2 } });
-		CHECK(repl[1] == Box { Pos { -3, 0 }, Size { 6, 1 } });
+		CHECK(*repl[0] == Box { Pos { 0, -2 }, Size { 3, 2 } });
+		CHECK(*repl[1] == Box { Pos { -3, 0 }, Size { 6, 2 } });
 	}
 	SUBCASE("merge dd")
 	{
@@ -243,9 +243,9 @@ TEST_CASE("two box merge")
 		std::array<std::optional<Box>, 3> repl;
 		auto nb = merge_boxes_if_adjacent(a, b, repl);
 		CHECK(nb == 3);
-		CHECK(repl[0] == Box { Pos { 0, -2 }, Size { 3, 1 } });
-		CHECK(repl[1] == Box { Pos { -3, -1 }, Size { 6, 1 } });
-		CHECK(repl[2] == Box { Pos { -3, 0 }, Size { 3, 1 } });
+		CHECK(*repl[0] == Box { Pos { 0, -2 }, Size { 3, 1 } });
+		CHECK(*repl[1] == Box { Pos { -3, -1 }, Size { 6, 1 } });
+		CHECK(*repl[2] == Box { Pos { -3, 0 }, Size { 3, 1 } });
 	}
 }
 
@@ -338,7 +338,7 @@ TEST_CASE("normalize_vector")
 
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 1);
-		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
+		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 4 } });
 	}
 	SUBCASE("normalize top-bottom reverse")
 	{
@@ -349,7 +349,7 @@ TEST_CASE("normalize_vector")
 
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 1);
-		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
+		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 4 } });
 	}
 	SUBCASE("normalize non-adjacent nw-se")
 	{
@@ -459,7 +459,7 @@ TEST_CASE("normalize_vector")
 		CHECK(nb.size() == 3);
 		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 3, 1 } });
 		CHECK(nb[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
-		CHECK(nb[2] == Box { Pos { -3, 0 }, Size { 3, 1 } });
+		CHECK(nb[2] == Box { Pos { -3, 1 }, Size { 3, 1 } });
 	}
 	SUBCASE("normalize ud reverse")
 	{
@@ -472,7 +472,7 @@ TEST_CASE("normalize_vector")
 		CHECK(nb.size() == 3);
 		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 3, 1 } });
 		CHECK(nb[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
-		CHECK(nb[2] == Box { Pos { -3, 0 }, Size { 3, 1 } });
+		CHECK(nb[2] == Box { Pos { -3, 1 }, Size { 3, 1 } });
 	}
 	SUBCASE("normalize eu")
 	{
@@ -483,7 +483,7 @@ TEST_CASE("normalize_vector")
 
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 2);
-		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 3, 2 } });
+		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
 		CHECK(nb[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
 	}
 	SUBCASE("normalize eu reverse")
@@ -495,7 +495,7 @@ TEST_CASE("normalize_vector")
 
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 2);
-		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 3, 2 } });
+		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
 		CHECK(nb[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
 	}
 	SUBCASE("normalize ee")
@@ -530,7 +530,7 @@ TEST_CASE("normalize_vector")
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 2);
 		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
-		CHECK(nb[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
+		CHECK(nb[1] == Box { Pos { -3, 0 }, Size { 3, 2 } });
 	}
 	SUBCASE("normalize ed reverse")
 	{
@@ -542,7 +542,7 @@ TEST_CASE("normalize_vector")
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 2);
 		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 6, 2 } });
-		CHECK(nb[1] == Box { Pos { 0, 0 }, Size { 3, 2 } });
+		CHECK(nb[1] == Box { Pos { -3, 0 }, Size { 3, 2 } });
 	}
 	SUBCASE("normalize du")
 	{
@@ -553,7 +553,7 @@ TEST_CASE("normalize_vector")
 
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 3);
-		CHECK(nb[0] == Box { Pos { -3, 0 }, Size { 3, 1 } });
+		CHECK(nb[0] == Box { Pos { 0, -2 }, Size { 3, 1 } });
 		CHECK(nb[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
 		CHECK(nb[2] == Box { Pos { 0, 1 }, Size { 3, 1 } });
 	}
@@ -566,7 +566,7 @@ TEST_CASE("normalize_vector")
 
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 3);
-		CHECK(nb[0] == Box { Pos { -3, 0 }, Size { 3, 1 } });
+		CHECK(nb[0] == Box { Pos { 0, -2 }, Size { 3, 1 } });
 		CHECK(nb[1] == Box { Pos { -3, -1 }, Size { 6, 2 } });
 		CHECK(nb[2] == Box { Pos { 0, 1 }, Size { 3, 1 } });
 	}
@@ -580,7 +580,7 @@ TEST_CASE("normalize_vector")
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 2);
 		CHECK(nb[0] == Box { Pos { 0, -2 }, Size { 3, 2 } });
-		CHECK(nb[1] == Box { Pos { -3, 0 }, Size { 6, 1 } });
+		CHECK(nb[1] == Box { Pos { -3, 0 }, Size { 6, 2 } });
 	}
 	SUBCASE("normalize de reverse")
 	{
@@ -592,7 +592,7 @@ TEST_CASE("normalize_vector")
 		auto nb = normalize_boxes(v);
 		CHECK(nb.size() == 2);
 		CHECK(nb[0] == Box { Pos { 0, -2 }, Size { 3, 2 } });
-		CHECK(nb[1] == Box { Pos { -3, 0 }, Size { 6, 1 } });
+		CHECK(nb[1] == Box { Pos { -3, 0 }, Size { 6, 2 } });
 	}
 	SUBCASE("normalize dd")
 	{
@@ -620,9 +620,18 @@ TEST_CASE("normalize_vector")
 		CHECK(nb[1] == Box { Pos { -3, -1 }, Size { 6, 1 } });
 		CHECK(nb[2] == Box { Pos { -3, 0 }, Size { 3, 1 } });
 	}
-	SUBCASE("")
+	SUBCASE("normalize rect grid")
 	{
+		Box b1 { Pos { -3, -2 }, Size { 3, 2 } };
+		Box b2 { Pos { 0, -2 }, Size { 3, 4 } };
+		Box b3 { Pos { 3, -2 }, Size { 3, 2 } };
+		Box b4 { Pos { -3, 0 }, Size { 3, 2 } };
+		Box b5 { Pos { 3, 0 }, Size { 3, 2 } };
+		std::vector<Box> v { b1, b2, b3, b4, b5 };
 
+		auto nb = normalize_boxes(v);
+		CHECK(nb.size() == 1);
+		CHECK(nb[0] == Box { Pos { -3, -2 }, Size { 9, 4 } });
 	}
 }
 

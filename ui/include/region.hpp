@@ -111,6 +111,16 @@ std::ostream & operator <<(std::ostream & os, Pos const & value);
 std::ostream & operator <<(std::ostream & os, Size const & value);
 std::ostream & operator <<(std::ostream & os, Box const & value);
 
+inline bool operator ==(Box const & lhs, Box const & rhs)
+{
+	return lhs.pos == rhs.pos && lhs.size == rhs.size;
+}
+
+inline bool operator !=(Box const & lhs, Box const & rhs)
+{
+	return (lhs == rhs) == false;
+}
+
 
 // Pre: lhs and rhs must not be overlapping. This is ensured by boolean operations on Box.
 int merge_boxes_if_adjacent(Box lhs, Box rhs,
