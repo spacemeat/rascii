@@ -1,6 +1,7 @@
 #include <array>
 #include <algorithm>
 #include <cassert>
+#include <limits>
 #include "region.hpp"
 
 namespace rascii
@@ -182,6 +183,8 @@ std::vector<Box> normalize_boxes(std::vector<Box> boxes)
 {
 	std::vector<Box> new_boxes;
 	std::array<std::optional<Box>, 3> repl;
+	size_t best_num_boxes = std::numeric_limits<size_t>::max();
+	bool run_again;
 	do
 	{
 		sort_boxes(boxes);
@@ -214,10 +217,15 @@ std::vector<Box> normalize_boxes(std::vector<Box> boxes)
 		}
 
 		boxes = new_boxes;
-		std::cout << "Boxes: \n";
-		for (auto & box : boxes)
-			{ std::cout << box << "\n"; }
-	} while (is_boxes_sorted(new_boxes) == false);
+
+		run_again = boxes.size() < best_num_boxes;
+		best_num_boxes = boxes.size();
+
+		//std::cout << "Boxes: \n";
+		//for (auto & box : boxes)
+		//	{ std::cout << box << "\n"; }
+	//} while (is_boxes_sorted(new_boxes) == false);
+	} while (run_again);
 
 	return new_boxes;
 }
@@ -413,10 +421,10 @@ std::vector<Box> Box::cut_with(Box const & tool, Coverage cover) const
 		boxes[num_boxes++] = Box { Pos { self.pos.x, self.pos.y },
 				  Size { self.size.w,
 						 intr.pos.y - self.pos.y } };
-		boxes[num_boxes++] = Box { Pos { self.pos.x, intr.pos.y - self.pos.y },
+		boxes[num_boxes++] = Box { Pos { self.pos.x, intr.pos.y },
 				  Size { intr.pos.x - self.pos.x,
 					     intr.size.h } };
-		boxes[num_boxes++] = Box { Pos { intr.pos.x + intr.size.w, intr.pos.y - self.pos.y },
+		boxes[num_boxes++] = Box { Pos { intr.pos.x + intr.size.w, intr.pos.y },
 				  Size { self.pos.x + self.size.w - (intr.pos.x + intr.size.w),
 					     intr.size.h } };
 		boxes[num_boxes++] = Box { Pos { self.pos.x, intr.pos.y + intr.size.h },
@@ -449,7 +457,7 @@ std::vector<Box> Box::cut_with(Box const & tool, Coverage cover) const
 		boxes[num_boxes++] = Box { Pos { self.pos.x, self.pos.y },
 			  Size { self.size.w,
 					 self.size.h - intr.size.h } };
-		boxes[num_boxes++] = Box { Pos { self.pos.x + intr.size.h, self.pos.y },
+		boxes[num_boxes++] = Box { Pos { self.pos.x + intr.size.h, intr.pos.y },
 			  Size { self.size.w - intr.size.w,
 					 intr.size.h } };
 		break;
@@ -608,7 +616,7 @@ std::vector<Box> Box::union_with(Box const & tool, Coverage cover) const
 		break;
 
     case Coverage::MIDDLE:
-		boxes[num_boxes++] = tool;
+		boxes[num_boxes++] = self;
 		break;
 
     case Coverage::MID_RIGHT:
@@ -642,14 +650,14 @@ std::vector<Box> Box::union_with(Box const & tool, Coverage cover) const
 						 intr.size.h } };
 		boxes[num_boxes++] = Box { Pos { tool.pos.x, self.pos.y + self.size.h },
 				  Size { tool.size.w,
-						 self.size.h + tool.size.h - intr.size.h } };
+						 tool.size.h - intr.size.h } };
 		break;
 
     case Coverage::LOWER_MID:
 		boxes[num_boxes++] = self;
 	    boxes[num_boxes++] = Box { Pos { tool.pos.x, self.pos.y + self.size.h }, 
 				  Size { tool.size.w,
-						 self.size.h + tool.size.h - intr.size.h } };
+						 tool.size.h - intr.size.h } };
 		break;
 
     case Coverage::LOWER_RIGHT:
@@ -657,11 +665,11 @@ std::vector<Box> Box::union_with(Box const & tool, Coverage cover) const
 				  Size { self.size.w,
 						 tool.pos.y - self.pos.y } };
 		boxes[num_boxes++] = Box { Pos { self.pos.x, tool.pos.y },
-				  Size { tool.pos.x - self.pos.x + self.size.w,
+				  Size { self.size.w + tool.size.w - intr.size.w,
 						 intr.size.h } };
 		boxes[num_boxes++] = Box { Pos { tool.pos.x, self.pos.y + self.size.h },
 				  Size { tool.size.w,
-						 self.size.h + tool.size.h - intr.size.h } };
+						 tool.size.h - intr.size.h } };
 		break;
 
 	case Coverage::LOWER_CUT:
@@ -676,10 +684,10 @@ std::vector<Box> Box::union_with(Box const & tool, Coverage cover) const
 				  Size { tool.size.w,
 						 intr.pos.y - tool.pos.y } };
 		boxes[num_boxes++] = Box { Pos { tool.pos.x, self.pos.y },
-				  Size { self.size.w + self.size.w - intr.size.w,
+				  Size { self.size.w + tool.size.w - intr.size.w,
 				         intr.size.h } };
-		boxes[num_boxes++] = Box { Pos { tool.pos.x, intr.pos.y + intr.size.w },
-				  Size { self.size.w,
+		boxes[num_boxes++] = Box { Pos { tool.pos.x, intr.pos.y + intr.size.h },
+				  Size { tool.size.w,
 						 tool.pos.y + tool.size.h - (self.pos.y + self.size.h) } };
 		break;
 
@@ -689,7 +697,7 @@ std::vector<Box> Box::union_with(Box const & tool, Coverage cover) const
 						 intr.pos.y - tool.pos.y } };
 		boxes[num_boxes++] = self;
 		boxes[num_boxes++] = Box { Pos { tool.pos.x, intr.pos.y + intr.size.h },
-				  Size { self.size.w,
+				  Size { tool.size.w,
 						 tool.pos.y + tool.size.h - (self.pos.y + self.size.h) } };
 		break;
 
@@ -698,10 +706,10 @@ std::vector<Box> Box::union_with(Box const & tool, Coverage cover) const
 				  Size { tool.size.w,
 						 intr.pos.y - tool.pos.y } };
 		boxes[num_boxes++] = Box { Pos { self.pos.x, self.pos.y },
-				  Size { self.size.w + self.size.w - intr.size.w,
+				  Size { self.size.w + tool.size.w - intr.size.w,
 				         intr.size.h } };
-		boxes[num_boxes++] = Box { Pos { tool.pos.x, intr.pos.y + intr.size.w },
-				  Size { self.size.w,
+		boxes[num_boxes++] = Box { Pos { tool.pos.x, intr.pos.y + intr.size.h },
+				  Size { tool.size.w,
 						 tool.pos.y + tool.size.h - (self.pos.y + self.size.h) } };
 		break;
 

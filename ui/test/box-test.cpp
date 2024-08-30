@@ -381,7 +381,7 @@ TEST_CASE("Box cut")
 	{
 		auto b2 = um.cut_with(bx);
 		CHECK(b2.size() == 1);
-		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 2 } });
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
 	}
 
 	SUBCASE("cut bx & ur")
@@ -412,8 +412,8 @@ TEST_CASE("Box cut")
 		auto b2 = uc.cut_with(bx);
 		CHECK(b2.size() == 3);
 		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 3 } });
-		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 3, 2 } });
-		CHECK(b2[2] == Box { Pos { 6, -3 }, Size { 3, 2 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 2 } });
 	}
 
 	SUBCASE("cut bx & ml")
@@ -604,8 +604,8 @@ TEST_CASE("Box cut")
 		CHECK(b2.size() == 4);
 		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 3 } });
 		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 11 } });
-		CHECK(b2[1] == Box { Pos { 6, -5 }, Size { 3, 11 } });
-		CHECK(b2[2] == Box { Pos { -8, 6 }, Size { 17, 3 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 11 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 17, 3 } });
 	}
 
 	// non-overlapping boxen
@@ -888,7 +888,7 @@ TEST_CASE("Box union")
 		auto b2 = bx.union_with(um);
 		CHECK(b2.size() == 2);
 		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
-		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 11 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 11, 11 } });
 	}
 
 	SUBCASE("union um & bx")
@@ -896,7 +896,7 @@ TEST_CASE("Box union")
 		auto b2 = um.union_with(bx);
 		CHECK(b2.size() == 2);
 		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
-		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 11 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 11, 11 } });
 	}
 
 	SUBCASE("union bx & ur")
@@ -922,7 +922,7 @@ TEST_CASE("Box union")
 		auto b2 = bx.union_with(uc);
 		CHECK(b2.size() == 2);
 		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 5 } });
-		CHECK(b2[0] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 11, 9 } });
 	}
 	
 	SUBCASE("union uc & bx")
@@ -930,7 +930,7 @@ TEST_CASE("Box union")
 		auto b2 = uc.union_with(bx);
 		CHECK(b2.size() == 2);
 		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 5 } });
-		CHECK(b2[0] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 11, 9 } });
 	}
 
 	SUBCASE("union bx & ml")
@@ -955,14 +955,14 @@ TEST_CASE("Box union")
 	{
 		auto b2 = bx.union_with(mm);
 		CHECK(b2.size() == 1);
-		CHECK(b2[0] == mm);
+		CHECK(b2[0] == bx);
 	}
 
 	SUBCASE("union mm & bx")
 	{
 		auto b2 = mm.union_with(bx);
 		CHECK(b2.size() == 1);
-		CHECK(b2[0] == mm);
+		CHECK(b2[0] == bx);
 	}
 
 	SUBCASE("union bx & mr")
@@ -1041,7 +1041,7 @@ TEST_CASE("Box union")
 		CHECK(b2.size() == 3);
 		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
 		CHECK(b2[1] == Box { Pos { -5, 4 }, Size { 14, 2 } });
-		CHECK(b2[2] == Box { Pos { -5, 6 }, Size { 5, 3 } });
+		CHECK(b2[2] == Box { Pos { 4, 6 }, Size { 5, 3 } });
 	}
 
 	SUBCASE("union lr & bx")
@@ -1050,7 +1050,7 @@ TEST_CASE("Box union")
 		CHECK(b2.size() == 3);
 		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
 		CHECK(b2[1] == Box { Pos { -5, 4 }, Size { 14, 2 } });
-		CHECK(b2[2] == Box { Pos { -5, 6 }, Size { 5, 3 } });
+		CHECK(b2[2] == Box { Pos { 4, 6 }, Size { 5, 3 } });
 	}
 
 	SUBCASE("union bx & loc")
@@ -1058,7 +1058,7 @@ TEST_CASE("Box union")
 		auto b2 = bx.union_with(loc);
 		CHECK(b2.size() == 2);
 		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
-		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 17, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 17, 5 } });
 	}
 	
 	SUBCASE("union loc & bx")
@@ -1066,7 +1066,7 @@ TEST_CASE("Box union")
 		auto b2 = loc.union_with(bx);
 		CHECK(b2.size() == 2);
 		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
-		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 17, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 17, 5 } });
 	}
 
 	SUBCASE("union bx & lc")
@@ -1091,36 +1091,36 @@ TEST_CASE("Box union")
 	{
 		auto b2 = bx.union_with(vc);
 		CHECK(b2.size() == 3);
-		CHECK(b2[0] == Box { Pos { -5, -8 }, Size { 5, 3 } });
-		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 14, 11 } });
-		CHECK(b2[2] == Box { Pos { -5, 6 }, Size { 5, 3 } });
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 11, 11 } });
+		CHECK(b2[2] == Box { Pos { -3, 6 }, Size { 7, 3 } });
 	}
 
 	SUBCASE("union vc & bx")
 	{
 		auto b2 = vc.union_with(bx);
 		CHECK(b2.size() == 3);
-		CHECK(b2[0] == Box { Pos { -5, -8 }, Size { 5, 3 } });
-		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 14, 11 } });
-		CHECK(b2[2] == Box { Pos { -5, 6 }, Size { 5, 3 } });
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 11, 11 } });
+		CHECK(b2[2] == Box { Pos { -3, 6 }, Size { 7, 3 } });
 	}
 
 	SUBCASE("union bx & rc")
 	{
 		auto b2 = bx.union_with(rc);
 		CHECK(b2.size() == 3);
-		CHECK(b2[0] == Box { Pos { -5, -8 }, Size { 5, 3 } });
+		CHECK(b2[0] == Box { Pos { 4, -8 }, Size { 5, 3 } });
 		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 14, 11 } });
-		CHECK(b2[2] == Box { Pos { -5, 6 }, Size { 5, 3 } });
+		CHECK(b2[2] == Box { Pos { 4, 6 }, Size { 5, 3 } });
 	}
 
 	SUBCASE("union rc & bx")
 	{
 		auto b2 = rc.union_with(bx);
 		CHECK(b2.size() == 3);
-		CHECK(b2[0] == Box { Pos { -5, -8 }, Size { 5, 3 } });
+		CHECK(b2[0] == Box { Pos { 4, -8 }, Size { 5, 3 } });
 		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 14, 11 } });
-		CHECK(b2[2] == Box { Pos { -5, 6 }, Size { 5, 3 } });
+		CHECK(b2[2] == Box { Pos { 4, 6 }, Size { 5, 3 } });
 	}
 
 	SUBCASE("union bx & fu")
@@ -1158,7 +1158,7 @@ TEST_CASE("Box union")
 	{
 		auto b2 = mm.union_with(um);
 		CHECK(b2.size() == 2);
-		CHECK(b2[0] == ul);
+		CHECK(b2[0] == um);
 		CHECK(b2[1] == mm);
 	}
 
@@ -1166,7 +1166,7 @@ TEST_CASE("Box union")
 	{
 		auto b2 = um.union_with(mm);
 		CHECK(b2.size() == 2);
-		CHECK(b2[0] == ul);
+		CHECK(b2[0] == um);
 		CHECK(b2[1] == mm);
 	}
 
@@ -1190,16 +1190,16 @@ TEST_CASE("Box union")
 	{
 		auto b2 = mm.union_with(ml);
 		CHECK(b2.size() == 2);
-		CHECK(b2[0] == mm);
-		CHECK(b2[1] == ml);
+		CHECK(b2[0] == ml);
+		CHECK(b2[1] == mm);
 	}
 
 	SUBCASE("union ml & mm")
 	{
 		auto b2 = ml.union_with(mm);
 		CHECK(b2.size() == 2);
-		CHECK(b2[0] == mm);
-		CHECK(b2[1] == ml);
+		CHECK(b2[0] == ml);
+		CHECK(b2[1] == mm);
 	}
 
 	SUBCASE("union mm & mm")
@@ -1259,16 +1259,16 @@ TEST_CASE("Box union")
 	{
 		auto b2 = mm.union_with(lm);
 		CHECK(b2.size() == 2);
-		CHECK(b2[0] == lm);
-		CHECK(b2[1] == mm);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == lm);
 	}
 
 	SUBCASE("union lm & mm")
 	{
 		auto b2 = lm.union_with(mm);
 		CHECK(b2.size() == 2);
-		CHECK(b2[0] == lm);
-		CHECK(b2[1] == mm);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == lm);
 	}
 
 	SUBCASE("union mm & lr")
