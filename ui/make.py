@@ -14,7 +14,7 @@ box_test = p.CompileAndLinkToExePhase({
     'name': 'box_test',
     'group': 'test',
     'sources': ['../test/box-helpers-test.cpp',
-                #'../test/region-test.cpp',
+                '../test/region-test.cpp',
                 '../test/box-test.cpp',
                 '../test/test.cpp'],
 }, region_lib)

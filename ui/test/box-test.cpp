@@ -289,6 +289,610 @@ TEST_CASE("Box intersect")
 }
 
 
+TEST_CASE("Box xor")
+{
+	Box bx { Pos { -5, -5 }, Size { 11, 11 } };
+
+	Box n0 { Pos { 2, 2 }, Size { 0, 0 } };
+	Box n1 { Pos { 2, 2 }, Size { 1, 0 } };
+	Box n2 { Pos { 2, 2 }, Size { 0, 1 } };
+	Box ul { Pos { -8, -8 }, Size { 5, 5 } };
+	Box um { Pos { -3, -8 }, Size { 7, 5 } };
+	Box ur { Pos {  4, -8 }, Size { 5, 5 } };
+	Box uc { Pos { -8, -8 }, Size { 17, 5 } };
+	Box ml { Pos { -8, -3 }, Size { 5, 7 } };
+	Box mm { Pos { -3, -3 }, Size { 7, 7 } };
+	Box mr { Pos {  4, -3 }, Size { 5, 7 } };
+	Box hc { Pos { -8, -3 }, Size { 17, 7 } };
+	Box ll { Pos { -8,  4 }, Size { 5, 5 } };
+	Box lm { Pos { -3,  4 }, Size { 7, 5 } };
+	Box lr { Pos {  4,  4 }, Size { 5, 5 } };
+	Box loc { Pos { -8, 4 }, Size { 17, 5 } };
+	Box lc { Pos { -8, -8 }, Size { 5, 17 } };
+	Box vc { Pos { -3, -8 }, Size { 7, 17 } };
+	Box rc { Pos { 4, -8 }, Size { 5, 17 } };
+	Box fu { Pos { -8, -8 }, Size { 17, 17 } };
+
+	SUBCASE("xor bx & n0")
+	{
+		auto b2 = bx.xor_with(n0);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == bx);
+	}
+
+	SUBCASE("xor n0 & bx")
+	{
+		auto b2 = n0.xor_with(bx);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == bx);
+	}
+
+	SUBCASE("xor bx & n1")
+	{
+		auto b2 = bx.xor_with(n1);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == bx);
+	}
+
+	SUBCASE("xor n1 & bx")
+	{
+		auto b2 = n1.xor_with(bx);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == bx);
+	}
+
+	SUBCASE("xor bx & n2")
+	{
+		auto b2 = bx.xor_with(n2);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == bx);
+	}
+
+	SUBCASE("xor n2 & bx")
+	{
+		auto b2 = n2.xor_with(bx);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == bx);
+	}
+
+	SUBCASE("xor bx & ul")
+	{
+		auto b2 = bx.xor_with(ul);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { -3, -5 }, Size { 9, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor ul & bx")
+	{
+		auto b2 = ul.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { -3, -5 }, Size { 9, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor bx & um")
+	{
+		auto b2 = bx.xor_with(um);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 2, 2 } });
+		CHECK(b2[2] == Box { Pos { 4, -5 }, Size { 2, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor um & bx")
+	{
+		auto b2 = um.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 2, 2 } });
+		CHECK(b2[2] == Box { Pos { 4, -5 }, Size { 2, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor bx & ur")
+	{
+		auto b2 = bx.xor_with(ur);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { 4, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 9, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor ur & bx")
+	{
+		auto b2 = ur.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { 4, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 9, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor bx & uc")
+	{
+		auto b2 = bx.xor_with(uc);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+	
+	SUBCASE("xor uc & bx")
+	{
+		auto b2 = uc.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { -5, -3 }, Size { 11, 9 } });
+	}
+
+	SUBCASE("xor bx & ml")
+	{
+		auto b2 = bx.xor_with(ml);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -8, -3 }, Size { 3, 7 } });
+		CHECK(b2[2] == Box { Pos { -3, -3 }, Size { 9, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor ml & bx")
+	{
+		auto b2 = ml.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -8, -3 }, Size { 3, 7 } });
+		CHECK(b2[2] == Box { Pos { -3, -3 }, Size { 9, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor bx & mm")
+	{
+		auto b2 = bx.xor_with(mm);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 2, 7 } });
+		CHECK(b2[2] == Box { Pos { 4, -3 }, Size { 2, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor mm & bx")
+	{
+		auto b2 = mm.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 2, 7 } });
+		CHECK(b2[2] == Box { Pos { 4, -3 }, Size { 2, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor bx & mr")
+	{
+		auto b2 = bx.xor_with(mr);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 9, 7 } });
+		CHECK(b2[2] == Box { Pos { 6, -3 }, Size { 3, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor mr & bx")
+	{
+		auto b2 = mr.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -5, -3 }, Size { 9, 7 } });
+		CHECK(b2[2] == Box { Pos { 6, -3 }, Size { 3, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor bx & hc")
+	{
+		auto b2 = bx.xor_with(hc);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -8, -3 }, Size { 3, 7 } });
+		CHECK(b2[2] == Box { Pos { 6, -3 }, Size { 3, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor hc & bx")
+	{
+		auto b2 = hc.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 2 } });
+		CHECK(b2[1] == Box { Pos { -8, -3 }, Size { 3, 7 } });
+		CHECK(b2[2] == Box { Pos { 6, -3 }, Size { 3, 7 } });
+		CHECK(b2[3] == Box { Pos { -5, 4 }, Size { 11, 2 } });
+	}
+
+	SUBCASE("xor bx & ll")
+	{
+		auto b2 = bx.xor_with(ll);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { -3, 4 }, Size { 9, 2 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor ll & bx")
+	{
+		auto b2 = ll.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { -3, 4 }, Size { 9, 2 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor bx & lm")
+	{
+		auto b2 = bx.xor_with(lm);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -5, 4 }, Size { 2, 2 } });
+		CHECK(b2[2] == Box { Pos { 4, 4 }, Size { 2, 2 } });
+		CHECK(b2[3] == Box { Pos { -3, 6 }, Size { 7, 3 } });
+	}
+
+	SUBCASE("xor lm & bx")
+	{
+		auto b2 = lm.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -5, 4 }, Size { 2, 2 } });
+		CHECK(b2[2] == Box { Pos { 4, 4 }, Size { 2, 2 } });
+		CHECK(b2[3] == Box { Pos { -3, 6 }, Size { 7, 3 } });
+	}
+
+	SUBCASE("xor bx & lr")
+	{
+		auto b2 = bx.xor_with(lr);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -5, 4 }, Size { 9, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, 4 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { 4, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor lr & bx")
+	{
+		auto b2 = lr.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -5, 4 }, Size { 9, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, 4 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { 4, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor bx & loc")
+	{
+		auto b2 = bx.xor_with(loc);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, 4 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 17, 3 } });
+	}
+	
+	SUBCASE("xor loc & bx")
+	{
+		auto b2 = loc.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -5, -5 }, Size { 11, 9 } });
+		CHECK(b2[1] == Box { Pos { -8, 4 }, Size { 3, 2 } });
+		CHECK(b2[2] == Box { Pos { 6, 4 }, Size { 3, 2 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 17, 3 } });
+	}
+
+	SUBCASE("xor bx & lc")
+	{
+		auto b2 = bx.xor_with(lc);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 11 } });
+		CHECK(b2[2] == Box { Pos { -3, -5 }, Size { 9, 11 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 5, 3 } });
+	}
+	
+	SUBCASE("xor lc & bx")
+	{
+		auto b2 = lc.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 11 } });
+		CHECK(b2[2] == Box { Pos { -3, -5 }, Size { 9, 11 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor bx & vc")
+	{
+		auto b2 = bx.xor_with(vc);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 2, 11 } });
+		CHECK(b2[2] == Box { Pos { 4, -5 }, Size { 2, 11 } });
+		CHECK(b2[3] == Box { Pos { -3, 6 }, Size { 7, 3 } });
+	}
+
+	SUBCASE("xor vc & bx")
+	{
+		auto b2 = vc.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 2, 11 } });
+		CHECK(b2[2] == Box { Pos { 4, -5 }, Size { 2, 11 } });
+		CHECK(b2[3] == Box { Pos { -3, 6 }, Size { 7, 3 } });
+	}
+
+	SUBCASE("xor bx & rc")
+	{
+		auto b2 = bx.xor_with(rc);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { 4, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 9, 11 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 11 } });
+		CHECK(b2[3] == Box { Pos { 4, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor rc & bx")
+	{
+		auto b2 = rc.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { 4, -8 }, Size { 5, 3 } });
+		CHECK(b2[1] == Box { Pos { -5, -5 }, Size { 9, 11 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 11 } });
+		CHECK(b2[3] == Box { Pos { 4, 6 }, Size { 5, 3 } });
+	}
+
+	SUBCASE("xor bx & fu")
+	{
+		auto b2 = bx.xor_with(fu);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 11 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 11 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 17, 3 } });
+	}
+
+	SUBCASE("xor fu & bx")
+	{
+		auto b2 = fu.xor_with(bx);
+		CHECK(b2.size() == 4);
+		CHECK(b2[0] == Box { Pos { -8, -8 }, Size { 17, 3 } });
+		CHECK(b2[1] == Box { Pos { -8, -5 }, Size { 3, 11 } });
+		CHECK(b2[2] == Box { Pos { 6, -5 }, Size { 3, 11 } });
+		CHECK(b2[3] == Box { Pos { -8, 6 }, Size { 17, 3 } });
+	}
+
+	// non-overlapping boxen
+	SUBCASE("xor mm & ul")
+	{
+		auto b2 = mm.xor_with(ul);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == ul);
+		CHECK(b2[1] == mm);
+	}
+
+	SUBCASE("xor ul & mm")
+	{
+		auto b2 = ul.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == ul);
+		CHECK(b2[1] == mm);
+	}
+
+	SUBCASE("xor mm & um")
+	{
+		auto b2 = mm.xor_with(um);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { um.pos },
+		                     Size { um.size.w, um.size.h + mm.size.h } });
+	}
+
+	SUBCASE("xor um & mm")
+	{
+		auto b2 = um.xor_with(mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { um.pos },
+		                     Size { um.size.w, um.size.h + mm.size.h } });
+	}
+
+	SUBCASE("xor mm & ur")
+	{
+		auto b2 = mm.xor_with(ur);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == ur);
+		CHECK(b2[1] == mm);
+	}
+
+	SUBCASE("xor ur & mm")
+	{
+		auto b2 = ur.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == ur);
+		CHECK(b2[1] == mm);
+	}
+
+	SUBCASE("xor mm & ml")
+	{
+		auto b2 = mm.xor_with(ml);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { ml.pos },
+		                     Size { ml.size.w + mm.size.w, ml.size.h } });
+	}
+
+	SUBCASE("xor ml & mm")
+	{
+		auto b2 = ml.xor_with(mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { ml.pos },
+		                     Size { ml.size.w + mm.size.w, ml.size.h } });
+	}
+
+	SUBCASE("xor mm & mm")
+	{
+		auto b2 = mm.xor_with(mm);
+		CHECK(b2.size() == 0);
+	}
+
+	SUBCASE("xor mm & mr")
+	{
+		auto b2 = mm.xor_with(mr);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { mm.pos },
+		                     Size { mm.size.w + mr.size.w, mm.size.h } });
+	}
+
+	SUBCASE("xor mr & mm")
+	{
+		auto b2 = mr.xor_with(mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { mm.pos },
+		                     Size { mm.size.w + mr.size.w, mm.size.h } });
+	}
+
+	SUBCASE("xor mm & hc")
+	{
+		auto b2 = mm.xor_with(hc);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == Box { Pos { -8, -3 }, Size { 5, 7 } });
+		CHECK(b2[1] == Box { Pos { 4, -3 }, Size { 5, 7 } });
+	}
+
+	SUBCASE("xor hc & mm")
+	{
+		auto b2 = hc.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == Box { Pos { -8, -3 }, Size { 5, 7 } });
+		CHECK(b2[1] == Box { Pos { 4, -3 }, Size { 5, 7 } });
+	}
+
+	SUBCASE("xor mm & ll")
+	{
+		auto b2 = mm.xor_with(ll);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == ll);
+	}
+
+	SUBCASE("xor ll & mm")
+	{
+		auto b2 = ll.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == ll);
+	}
+
+	SUBCASE("xor mm & lm")
+	{
+		auto b2 = mm.xor_with(lm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { mm.pos, Size { mm.size.w, mm.size.h + lm.size.h } });
+	}
+
+	SUBCASE("xor lm & mm")
+	{
+		auto b2 = lm.xor_with(mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { mm.pos, Size { mm.size.w, mm.size.h + lm.size.h } });
+	}
+
+	SUBCASE("xor mm & lr")
+	{
+		auto b2 = mm.xor_with(lr);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == lr);
+	}
+
+	SUBCASE("xor lr & mm")
+	{
+		auto b2 = lr.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == lr);
+	}
+
+	SUBCASE("xor mm & loc")
+	{
+		auto b2 = mm.xor_with(loc);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == loc);
+	}
+
+	SUBCASE("xor loc & mm")
+	{
+		auto b2 = loc.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == mm);
+		CHECK(b2[1] == loc);
+	}
+
+	SUBCASE("xor mm & lc")
+	{
+		auto b2 = mm.xor_with(lc);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ul);
+		CHECK(b2[1] == Box { ml.pos, Size { ml.size.w + mm.size.w, ml.size.h } });
+		CHECK(b2[2] == ll);
+	}
+
+	SUBCASE("xor lc & mm")
+	{
+		auto b2 = lc.xor_with(mm);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ul);
+		CHECK(b2[1] == Box { ml.pos, Size { ml.size.w + mm.size.w, ml.size.h } });
+		CHECK(b2[2] == ll);
+	}
+
+	SUBCASE("xor mm & vc")
+	{
+		auto b2 = mm.xor_with(vc);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == um);
+		CHECK(b2[1] == lm);
+	}
+
+	SUBCASE("xor vc & mm")
+	{
+		auto b2 = vc.xor_with(mm);
+		CHECK(b2.size() == 2);
+		CHECK(b2[0] == um);
+		CHECK(b2[1] == lm);
+	}
+
+	SUBCASE("xor mm & rc")
+	{
+		auto b2 = mm.xor_with(rc);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ur);
+		CHECK(b2[1] == Box { mm.pos, Size { mm.size.w + mr.size.w, mr.size.h } });
+		CHECK(b2[2] == lr);
+	}
+
+	SUBCASE("xor rc & mm")
+	{
+		auto b2 = rc.xor_with(mm);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ur);
+		CHECK(b2[1] == Box { mm.pos, Size { mm.size.w + mr.size.w, mr.size.h } });
+		CHECK(b2[2] == lr);
+	}
+}
+
 TEST_CASE("Box cut")
 {
 	Box bx { Pos { -5, -5 }, Size { 11, 11 } };
@@ -1157,17 +1761,21 @@ TEST_CASE("Box union")
 	SUBCASE("union mm & um")
 	{
 		auto b2 = mm.union_with(um);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == um);
-		CHECK(b2[1] == mm);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == um);
+		//CHECK(b2[1] == mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 12 } });
 	}
 
 	SUBCASE("union um & mm")
 	{
 		auto b2 = um.union_with(mm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == um);
-		CHECK(b2[1] == mm);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == um);
+		//CHECK(b2[1] == mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -3, -8 }, Size { 7, 12 } });
 	}
 
 	SUBCASE("union mm & ur")
@@ -1189,17 +1797,21 @@ TEST_CASE("Box union")
 	SUBCASE("union mm & ml")
 	{
 		auto b2 = mm.union_with(ml);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == ml);
-		CHECK(b2[1] == mm);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == ml);
+		//CHECK(b2[1] == mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -8, -3 }, Size { 12, 7 } });
 	}
 
 	SUBCASE("union ml & mm")
 	{
 		auto b2 = ml.union_with(mm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == ml);
-		CHECK(b2[1] == mm);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == ml);
+		//CHECK(b2[1] == mm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -8, -3 }, Size { 12, 7 } });
 	}
 
 	SUBCASE("union mm & mm")
@@ -1212,17 +1824,21 @@ TEST_CASE("Box union")
 	SUBCASE("union mm & mr")
 	{
 		auto b2 = mm.union_with(mr);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == mm);
-		CHECK(b2[1] == mr);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == mm);
+		//CHECK(b2[1] == mr);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -3, -3 }, Size { 12, 7 } });
 	}
 
 	SUBCASE("union mr & mm")
 	{
 		auto b2 = mr.union_with(mm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == mm);
-		CHECK(b2[1] == mr);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == mm);
+		//CHECK(b2[1] == mr);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -3, -3 }, Size { 12, 7 } });
 	}
 
 	SUBCASE("union mm & hc")
@@ -1258,17 +1874,21 @@ TEST_CASE("Box union")
 	SUBCASE("union mm & lm")
 	{
 		auto b2 = mm.union_with(lm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == mm);
-		CHECK(b2[1] == lm);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == mm);
+		//CHECK(b2[1] == lm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -3, -3 }, Size { 7, 12 } });
 	}
 
 	SUBCASE("union lm & mm")
 	{
 		auto b2 = lm.union_with(mm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == mm);
-		CHECK(b2[1] == lm);
+		//CHECK(b2.size() == 2);
+		//CHECK(b2[0] == mm);
+		//CHECK(b2[1] == lm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == Box { Pos { -3, -3 }, Size { 7, 12 } });
 	}
 
 	SUBCASE("union mm & lr")
@@ -1306,17 +1926,19 @@ TEST_CASE("Box union")
 	SUBCASE("union mm & lc")
 	{
 		auto b2 = mm.union_with(lc);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == lc);
-		CHECK(b2[1] == mm);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ul);
+		CHECK(b2[1] == Box { ml.pos, Size { lc.size.w + mm.size.w, mm.size.h } });
+		CHECK(b2[2] == ll);
 	}
 
 	SUBCASE("union lc & mm")
 	{
 		auto b2 = lc.union_with(mm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == lc);
-		CHECK(b2[1] == mm);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ul);
+		CHECK(b2[1] == Box { ml.pos, Size { lc.size.w + mm.size.w, mm.size.h } });
+		CHECK(b2[2] == ll);
 	}
 
 	SUBCASE("union mm & vc")
@@ -1329,25 +1951,25 @@ TEST_CASE("Box union")
 	SUBCASE("union vc & mm")
 	{
 		auto b2 = vc.union_with(mm);
-		CHECK(b2.size() == 3);
-		CHECK(b2[0] == um);
-		CHECK(b2[1] == mm);
-		CHECK(b2[2] == lm);
+		CHECK(b2.size() == 1);
+		CHECK(b2[0] == vc);
 	}
 
 	SUBCASE("union mm & rc")
 	{
 		auto b2 = mm.union_with(rc);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == rc);
-		CHECK(b2[1] == mm);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ur);
+		CHECK(b2[1] == Box { mm.pos, Size { mm.size.w + rc.size.w, mm.size.h } });
+		CHECK(b2[2] == lr);
 	}
 
 	SUBCASE("union rc & mm")
 	{
 		auto b2 = rc.union_with(mm);
-		CHECK(b2.size() == 2);
-		CHECK(b2[0] == rc);
-		CHECK(b2[1] == mm);
+		CHECK(b2.size() == 3);
+		CHECK(b2[0] == ur);
+		CHECK(b2[1] == Box { mm.pos, Size { mm.size.w + rc.size.w, mm.size.h } });
+		CHECK(b2[2] == lr);
 	}
 }

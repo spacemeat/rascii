@@ -97,12 +97,14 @@ struct Box
 	Box & operator -= (Pos p) { pos -= p; return *this; }
 
 	Box intersection_with(Box const & tool) const;
+	std::vector<Box> xor_with(Box const & tool) const;
 	std::vector<Box> cut_with(Box const & tool) const;
 	std::vector<Box> union_with(Box const & tool) const;
 
 private:
 	Coverage compute_coverage(Box const & tool) const;
 	Box intersection_with(Box const & tool, Coverage cover) const;
+	std::vector<Box> xor_with(Box const & tool, Coverage cover) const;
 	std::vector<Box> cut_with(Box const & tool, Coverage cover) const;
 	std::vector<Box> union_with(Box const & tool, Coverage cover) const;
 };
@@ -121,12 +123,22 @@ inline bool operator !=(Box const & lhs, Box const & rhs)
 	return (lhs == rhs) == false;
 }
 
+inline bool box_less_than_y_precedent(Box const & lhs, Box const & rhs)
+{
+	return lhs < rhs;
+}
+
+inline bool box_less_than_x_precedent(Box const & lhs, Box const & rhs)
+{
+	return lhs.pos.x < rhs.pos.x ||
+		   (lhs.pos.x == rhs.pos.x && lhs.pos.y < rhs.pos.y);
+}
 
 // Pre: lhs and rhs must not be overlapping. This is ensured by boolean operations on Box.
 int merge_boxes_if_adjacent(Box lhs, Box rhs,
 							std::array<std::optional<Box>, 3> & replacements);
 bool is_boxes_sorted(std::vector<Box> const & boxes);
-void sort_boxes(std::vector<Box> & boxes);
+void sort_boxes(std::vector<Box> & boxes, bool y_precedent = true);
 std::vector<Box> normalize_boxes(std::vector<Box> boxes);
 
 
@@ -134,16 +146,33 @@ std::vector<Box> normalize_boxes(std::vector<Box> boxes);
 // The boxes must be in sorted order: The top-left corner is sorted by y, then by x.
 class Region
 {
+public:
 	Region() = default;
-	explicit Region(std::vector<Box> const & rhs);
+	explicit Region(std::vector<Box> rhs);
+	
+	std::vector<Box> get_boxes() const { return m_boxes; }
 
 	Region intersection_with(Region const & tool) const;
+	Region xor_with(Region const & tool) const;
 	Region cut_with(Region const & tool) const;
 	Region union_with(Region const & tool) const;
 	
 private:
 	std::vector<Box> m_boxes;
 };
+
+inline bool operator ==(Region const & lhs, Region const & rhs)
+{
+	auto && lb = lhs.get_boxes();
+	auto && rb = rhs.get_boxes();
+	return lb == rb;
+}
+
+inline bool operator !=(Region const & lhs, Region const & rhs)
+{
+	return (lhs == rhs) == false;
+}
+
 
 }
 
